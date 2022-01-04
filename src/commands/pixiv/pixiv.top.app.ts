@@ -12,15 +12,26 @@ class PixivTop extends AppCommand {
             return session.reply(this.help)
         }
 
+        if (isNaN(Number(session.args[0]))) {
+            return session.reply('用数字wdnmd')
+        }
+
+        if ((Number(session.args[0])) > 25) {
+            return session.reply('由于开黑啦限制，最多展示20张图片')
+        }
+
+        const number = session.args[0] || 10
         const response = await axios({
             method: 'get',
-            url: 'http://127.0.0.1:3000/illusts'
+            url: `http://127.0.0.1:3000/illusts/top?tops=${number}`
         })
+
+        console.log(response.data.imageUrls.length)
 
         const card = new Card()
         // @ts-ignore
-        response.data.data.imageUrls.forEach((item, index) => {
-            card.addText(`pixiv top${index + 1}: ${item.title}`)
+        response.data.imageUrls.forEach((item, index) => {
+            card.addText(`pixiv top${index + 1}: ${item.title}. pid: ${item.id}`)
             card.addImage(item.url)
         })
 
