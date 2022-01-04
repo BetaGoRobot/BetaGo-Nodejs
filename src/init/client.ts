@@ -5,7 +5,5 @@ export const bot = new KBotify({
     mode: 'websocket',
     token: auth.khltoken,
     port: auth.khlport,
-    verifyToken: auth.khlverify,
-    key: auth.khlkey,
     ignoreDecryptError: true,
 });
