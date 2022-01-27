@@ -24,6 +24,7 @@
   "homepage": "https://github.com/fi6/kbotify-template#readme",
   "dependencies": {
     "@types/axios": "^0.14.0",
+    "NeteaseCloudMusicApi": "^4.2.0",
     "axios": "^0.24.0",
     "kbotify": "^0.2.5",
     "ts-node": "^10.4.0"

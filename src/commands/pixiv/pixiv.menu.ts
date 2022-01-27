@@ -1,5 +1,6 @@
 import { Card, MenuCommand } from 'kbotify'
 import { pixivTop } from './pixiv.top.app'
+import { pixivTest } from './pixiv.test.app'
 
 class PixivMenu extends MenuCommand {
     code = 'pixiv';
@@ -10,4 +11,4 @@ class PixivMenu extends MenuCommand {
     useCardMenu = true;
 }
 
-export const pixivMenu = new PixivMenu(pixivTop)
+export const pixivMenu = new PixivMenu(pixivTop, pixivTest)

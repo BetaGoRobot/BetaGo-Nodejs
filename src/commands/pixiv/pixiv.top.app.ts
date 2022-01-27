@@ -26,11 +26,11 @@ class PixivTop extends AppCommand {
             url: `http://127.0.0.1:3000/illusts/top?tops=${number}`
         })
 
-        console.log(response.data.imageUrls.length)
-
+        const metaUrls = response.data;
+        console.log(metaUrls)
         const card = new Card()
         // @ts-ignore
-        response.data.imageUrls.forEach((item, index) => {
+        metaUrls.pixiv.imageUrls.forEach((item, index) => {
             card.addText(`pixiv top${index + 1}: ${item.title}. pid: ${item.id}`)
             card.addImage(item.url)
         })
