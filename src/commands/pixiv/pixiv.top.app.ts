@@ -8,6 +8,7 @@ class PixivTop extends AppCommand {
     help = '.pixiv top 查看当日top10图片'
     intro = 'pixiv top榜';
     func: AppFunc<BaseSession> = async (session) => {
+        console.log('收到post请求')
         if (!session.args.length) {
             return session.reply(this.help)
         }
@@ -27,7 +28,6 @@ class PixivTop extends AppCommand {
         })
 
         const metaUrls = response.data;
-        console.log(metaUrls)
         const card = new Card()
         // @ts-ignore
         metaUrls.pixiv.imageUrls.forEach((item, index) => {
