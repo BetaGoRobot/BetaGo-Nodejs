@@ -17,7 +17,7 @@ class PixivTop extends AppCommand {
         }
 
         if ((Number(session.args[0])) > 25) {
-            return session.reply('由于开黑啦限制，最多展示20张图片')
+            return session.reply('由于开黑啦限制，top最多为20')
         }
 
         const number = session.args[0] || 10

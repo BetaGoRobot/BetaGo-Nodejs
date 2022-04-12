@@ -1,4 +1,4 @@
-import { bot } from 'init/client';
+import { bot } from './init/client';
 import { echoMenu } from './commands/echo/echo.menu';
 import { pixivMenu } from './commands/pixiv/pixiv.menu'
 
