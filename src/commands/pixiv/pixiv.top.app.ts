@@ -28,6 +28,7 @@ class PixivTop extends AppCommand {
         })
 
         const metaUrls = response.data;
+        console.log(metaUrls)
         const card = new Card()
         // @ts-ignore
         metaUrls.pixiv.imageUrls.forEach((item, index) => {
