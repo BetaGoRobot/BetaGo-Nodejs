@@ -4,7 +4,6 @@ import { pixivMenu } from './commands/pixiv/pixiv.menu'
 
 
 bot.messageSource.on('message', (e) => {
-    // console.log(e)
     
 });
 
