@@ -1,6 +1,7 @@
 import { Card, MenuCommand } from 'kbotify'
-import { pixivTop } from './pixiv.top.app'
-import { pixivTest } from './pixiv.test.app'
+import { pixivDay } from './trigger/pixiv.top.day.app'
+import { pixivMonth } from './trigger/pixiv.top.month.app'
+import { pixivWeek } from './trigger/pixiv.top.week.app'
 
 class PixivMenu extends MenuCommand {
     code = 'pixiv';
@@ -11,4 +12,4 @@ class PixivMenu extends MenuCommand {
     useCardMenu = true;
 }
 
-export const pixivMenu = new PixivMenu(pixivTop, pixivTest)
+export const pixivMenu = new PixivMenu(pixivDay, pixivWeek, pixivMonth)
