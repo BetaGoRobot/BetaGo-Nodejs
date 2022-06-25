@@ -31,6 +31,7 @@
     "esbuild": "^0.14.36",
     "esbuild-node-tsc": "^1.8.5",
     "kbotify": "^0.2.5",
+    "moment": "^2.29.3",
     "ts-node": "^10.4.0"
   },
   "devDependencies": {
