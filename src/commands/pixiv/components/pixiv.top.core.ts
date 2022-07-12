@@ -3,6 +3,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { Mode, DateSpace, Desc } from '../type'
 
+//TODO: 使用该域名前缀将会避开GWF  replace("i.pximg.net", "i.pixiv.re")
 
 export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (session) => {
     if (!session.args.length) {
