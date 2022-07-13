@@ -15,3 +15,9 @@ export enum Desc {
     week = '周榜',
     month = '月榜'
 }
+
+export type SearchLinks = Array<{
+    title: string,
+    link: string,
+    id: string
+}>
