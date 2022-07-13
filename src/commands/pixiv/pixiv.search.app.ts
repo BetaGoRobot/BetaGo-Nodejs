@@ -1,7 +1,7 @@
 import { AppCommand, AppFunc, BaseSession, Card } from 'kbotify'
-import { Failed } from '../../cards/search'
-import { SearchLinks } from './type'
 import { Search } from '../../cards/search'
+import { AbNormal } from '../../cards/error'
+import { SearchLinks, SearchFinalLinks } from './type'
 import { NSFW } from './components/nsfw'
 import auth from '../../configs/auth'
 import FormData, { Stream } from 'form-data'
@@ -17,7 +17,6 @@ async function stream2buffer(stream: Stream): Promise<Buffer> {
     });
 }
 
-
 class PixivSearch extends AppCommand {
     code = "search"
     trigger = "search"
@@ -27,20 +26,24 @@ class PixivSearch extends AppCommand {
 
         const sendPics = async (links: SearchLinks) => {
             
-            const readyLinks: string[] = []
-            const readyPids: string[] = []
+            const readyPicsInfo: SearchFinalLinks = []
             if (!links.length) {
-                session.sendCard(Failed('关键词请求为空'))
+                session.sendCard(Search.Failed('关键词图片貌似搜不到捏，要不换个词试试？'))
                 return
             }
 
             for (let index = 0; index < links.length; index++){
                 if (index === 0) {
-                    const card = await Search(readyLinks, readyPids)
+                    const card = await Search.pics(readyPicsInfo, session)
                     await session.sendCard(card).then(res => {
                         console.log(res.msgSent?.msgId)
-                        msgId = res.msgSent?.msgId || '';
-                    });
+                        msgId = res.msgSent?.msgId || ''
+                    }).catch(err => {
+                        if (err) {
+                            session.sendCard(AbNormal.error(err))
+                            console.error(err);
+                        }
+                    })
                 }
 
                 // 走pixiv的cdn，可不需要代理
@@ -52,7 +55,6 @@ class PixivSearch extends AppCommand {
                 })
 
                 let buffer = await sharp(await stream2buffer(stream.data)).resize(512).jpeg().toBuffer()
-                console.log(buffer)
                 const result = await NSFW(buffer)
                 const nsfw = result.blur > 0
                 if (nsfw) {
@@ -69,56 +71,55 @@ class PixivSearch extends AppCommand {
                         ...formdata.getHeaders()
                     }
                 }).then(res => {
-                    readyLinks.push(res.data.data.url)
-                    readyPids.push(links[index].id)
+                    readyPicsInfo.push({
+                        title: links[index].title,
+                        id: links[index].id,
+                        link: res.data.data.url,
+                        origin: links[index].link
+                    })
                 }).catch(err => {
-
+                    if (err) {
+                        console.error(err)
+                        session.sendCard(AbNormal.error(`上传第${index + 1}张图出现错误`))
+                    }
                 })
                 // 进行更新
                 if (msgId) {
-                    const card = await Search(readyLinks, readyPids)
-                    session.updateMessage(msgId, [card])
+                    const card = await Search.pics(readyPicsInfo, session)
+                    session.updateMessage(msgId, [card]).catch(err => {
+                        if (err) {
+                            console.error(err)
+                            session.sendCard(AbNormal.error(`更新第${index + 1}张图出现错误`))
+                        }
+                    })
                 }
             }
 
         }
 
         if (!session.args.length) {
-            session.sendCard(new Card({
-                type: "card",
-                theme: "warning",
-                size: "lg",
-                modules: [
-                    {
-                        type: "header",
-                        text: {
-                            type: "plain-text",
-                            content : "Pixiv search 命令出错"
-                        }
-                    },
-                    {
-                        type: "section",
-                        text: {
-                            type: "kmarkdown",
-                            content: "请输入关键词，正确用法应为 `.pixiv search [关键词]`"
-                        }
-                    }
-                ]
-            }))
+            session.sendCard(AbNormal.args('.pixiv search','请输入关键词, `.pixiv search [关键词]`'))
         } else {
             const keywords = session.args[0];
-            const res = await axios({
+            await axios({
+                // TODO 后续换成自己的接口，先用大佬的
                 url: "http://pixiv.lolicon.ac.cn/topInTag",
                 params: {
                     keyword: keywords
                 }
+            }).then(res => {
+                const slice = res.data.slice(0, 9);
+                sendPics(slice.map((item: any) => ({
+                    id: item.id,
+                    link: item.image_urls.large,
+                    title: item.title
+                })))
+            }).catch(err => {
+                if (err) {
+                    console.error(err)
+                    session.sendCard(AbNormal.error(err))
+                }
             });
-
-            sendPics(res.data.map((item: any) => ({
-                id: item.id,
-                link: item.image_urls.large,
-                title: item.title
-            })))
         }
     }
 }

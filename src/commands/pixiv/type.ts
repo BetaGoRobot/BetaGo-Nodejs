@@ -16,8 +16,12 @@ export enum Desc {
     month = '月榜'
 }
 
-export type SearchLinks = Array<{
+type SearchLink = {
     title: string,
     link: string,
-    id: string
-}>
+    id: string,
+}
+
+export type SearchLinks = Array<SearchLink>
+
+export type SearchFinalLinks = Array<SearchLink & { origin: string }>
