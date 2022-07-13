@@ -39,3 +39,19 @@ export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (
 
     return session.sendCard(card)
 }
+
+/**
+ * 
+ * const cards = new Card();
+        cards.addTitle(`${session.args[0]} 相关的热门插图`)
+        links.forEach(item => {
+            cards.addText(`title: ${item.title}, pid: ${item.id}`)
+            cards.addImage(item.link)
+        })
+        for (let i = links.length; i < 9; i++) {
+            cards.addText(`~~~~~加载中~~~~~`)
+            cards.addImage('https://img.kookapp.cn/assets/2022-07/vlOSxPNReJ0dw0dw.jpg')
+        }
+        console.log(cards)
+        return cards;
+ */

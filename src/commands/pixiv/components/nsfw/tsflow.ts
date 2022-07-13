@@ -3,10 +3,12 @@
 const nsfw = require('nsfwjs')
 const tf = require('@tensorflow/tfjs-node');
 
-let model: any 
+let model: any = undefined
 
-export const NSFW = async (buffer: Buffer) => {
-    model = await nsfw.load();
+export const NSFW = async (buffer: Buffer) => { 
+    if (!model) {
+        model = await nsfw.load();
+    }
     
     const detect = async (buffer: Buffer) => {
         const image = await tf.node.decodeImage(buffer, 3);

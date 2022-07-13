@@ -1,73 +1,53 @@
 import { Card } from "kbotify"
+import { SearchFinalLinks } from '../commands/pixiv/type'
+import { BaseSession } from 'kbotify'
 
-export const Failed = (inf: string) => {
-    return new Card({
-        "type": "card",
-        "theme": "warning",
-        "size": "lg",
-        "modules": [
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain-text",
-                    "content": "**关键词搜索失败**"
-                }
-            },
-            {
-                "type": "divider"
-            },
-            {
-                "type": "context",
-                "elements": [
-                    {
-                        "type": "kmarkdown",
-                        "content": "关键词图片貌似搜不到捏，要不换个词试试？"
+export namespace Search {
+    export const Failed = (inf: string) => {
+        return new Card({
+            type: "card",
+            theme: "warning",
+            size: "lg",
+            modules: [
+                {
+                    type: "header",
+                    text: {
+                        type: "plain-text",
+                        content: "** 搜索出现了一点点问题 **"
                     }
-                ]
-            }
-        ]
-    })
+                },
+                {
+                    type: "divider"
+                },
+                {
+                    type: "context",
+                    elements: [
+                        {
+                            type: "kmarkdown",
+                            content: `${inf}`
+                        }
+                    ]
+                }
+            ]
+        })
+    }
+
+    export const pics = async (links: SearchFinalLinks, session: BaseSession) => {
+        const cards = new Card();
+        cards.addTitle(`${session.args[0]} 相关的热门插图`)
+        links.forEach(item => {
+            cards.addText(`title: ${item.title}, pid: [${item.id}](https://www.pixiv.net/artworks/${item.id})`)
+            cards.addImage(item.link)
+        })
+        for (let i = links.length; i < 9; i++) {
+            cards.addText(`~~~~~加载中~~~~~`)
+            cards.addImage('https://img.kaiheila.cn/assets/2022-07/mxYbindKDX0u90xc.png')
+        }
+
+        return cards;
+    }
+
 }
 
-export const Search = async (links: string[], pid: string[]) => new Card({
-    type : "card",
-    theme : "info",
-    size : "lg",
-    modules : [
-        {
-            type: "header",
-            text: {
-                type: "plain-text",
-                content: "插画"
-                // "content": `${session.args.length == 0 ? "全站热门插画" : `「${session.args[0]}」的热门插画`}`
-            }
-        },
-        {
-            type : "divider"
-        },
-        {
-            type : "image-group",
-            elements : (() => {
-                const images: any[] = [];
-                let cnt = 0;
 
-                for (const val of links) {
-                    if (cnt >= 9) break;
-                    images.push({
-                        type: "image",
-                        src: val
-                    })
-                    cnt++;
-                }
-                while (images.length < 9) {
-                    // 后续会换
-                    images.push({
-                        type: "image",
-                        src: "https://img.kookapp.cn/assets/2022-07/vlOSxPNReJ0dw0dw.jpg"
-                    })
-                }
-                return images;
-            })()
-        },
-    ]
-})
+
