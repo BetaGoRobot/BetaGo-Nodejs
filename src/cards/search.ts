@@ -13,7 +13,7 @@ export namespace Search {
                     type: "header",
                     text: {
                         type: "plain-text",
-                        content: "** 搜索出现了一点点问题 **"
+                        content: "搜索出现了一点点问题"
                     }
                 },
                 {

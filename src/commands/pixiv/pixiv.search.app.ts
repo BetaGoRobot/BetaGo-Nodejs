@@ -86,6 +86,7 @@ class PixivSearch extends AppCommand {
                 // 进行更新
                 if (msgId) {
                     const card = await Search.pics(readyPicsInfo, session)
+                    console.log('searchCard', card)
                     session.updateMessage(msgId, [card]).catch(err => {
                         if (err) {
                             console.error(err)
