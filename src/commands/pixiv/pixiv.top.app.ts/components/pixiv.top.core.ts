@@ -43,35 +43,4 @@ export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (
             session.sendCard(Top.failed('网络异常，请求失败'))
         }
     })
-
-    // const pics = response.data.data;
-    // const metaUrls = pics.slice(0, number);
-    // const card = new Card();
-    // const end = moment().subtract(1, 'day').format('YYYY-MM-DD');
-    // const begin = moment().subtract(DateSpace[mode], 'day').format('YYYY-MM-DD');
-    // const range = mode === Mode.DAY ? `${end}` : `${begin} ~ ${end}`;    
-    // card.addTitle(`Pixiv${Desc[mode]} ${range}`, true);
-    // // @ts-ignore
-    // metaUrls.forEach((item, index) => {
-    //     card.addText(`top${index + 1}: ${item.title}. pid: ${item.id}. author: ${item.author}`)
-    //     card.addImage(item.url)
-    // })
-
-    // return session.sendCard(card)
 }
-
-/**
- * 
- * const cards = new Card();
-        cards.addTitle(`${session.args[0]} 相关的热门插图`)
-        links.forEach(item => {
-            cards.addText(`title: ${item.title}, pid: ${item.id}`)
-            cards.addImage(item.link)
-        })
-        for (let i = links.length; i < 9; i++) {
-            cards.addText(`~~~~~加载中~~~~~`)
-            cards.addImage('https://img.kookapp.cn/assets/2022-07/vlOSxPNReJ0dw0dw.jpg')
-        }
-        console.log(cards)
-        return cards;
- */
