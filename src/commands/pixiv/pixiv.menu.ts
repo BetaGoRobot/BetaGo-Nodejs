@@ -12,31 +12,41 @@ class PixivMenu extends MenuCommand {
         size: "lg",
         modules: [
             {
-                "type": "header",
-                "text": {
-                    "type": "plain-text",
-                    "content": "Pixiv 命令"
+                type: "header",
+                text: {
+                    type: "plain-text",
+                    content: "Pixiv 命令"
                 }
             },
             {
-                "type": "context",
-                "elements": [
+                type: "context",
+                elements: [
                     {
-                        "type": "kmarkdown",
-                        "content": "Test [Bot Market](https://www.botmarket.cn/bots?id=8) 留下一个五星好评！\n[问题反馈&建议](https://kook.top/iOOsLu)"
+                        type: "kmarkdown",
+                        content: "Test"
                     }
                 ]
             },
             {
-                "type": "divider"
+                type: "divider"
             },
             {
-                "type": "section",
-                "text": {
-                    "type": "kmarkdown",
-                    "content": "`.pixiv top [标签] ?` 获取本周 [标签] 标签的人气前九的图片，若 [标签] 缺省则为全站排名"
+                type: "section",
+                text: {
+                    type: "kmarkdown",
+                    content: "`.pixiv search [关键词]` 获得关键词相关热门插画九张"
                 }
             },
+            {
+                type: "divider"
+            },
+            {
+                type: "section",
+                text: {
+                    type: "kmarkdown",
+                    content: "`.pixiv [day/week/month] [number]` 获得**每日/每周/每月**的热门插画, `number`表示展示top插画数量"
+                }
+            }
         ]
     }).toString()
     useCardMenu = true;

@@ -3,10 +3,13 @@ import { Search } from '../../cards/search'
 import { AbNormal } from '../../cards/error'
 import { SearchLinks, SearchFinalLinks } from './type'
 import { NSFW } from './components/nsfw'
+import { Cache } from './components/cache/pixiv-illusts-kook'
 import auth from '../../configs/auth'
 import FormData, { Stream } from 'form-data'
-import sharp, { format } from "sharp"
+import sharp from "sharp"
 import axios from 'axios'
+
+const TIME_OUT = 5000;
 
 async function stream2buffer(stream: Stream): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
@@ -25,16 +28,27 @@ class PixivSearch extends AppCommand {
         let msgId: string
 
         const sendPics = async (links: SearchLinks) => {
-            
             const readyPicsInfo: SearchFinalLinks = []
             if (!links.length) {
                 session.sendCard(Search.Failed('关键词图片貌似搜不到捏，要不换个词试试？'))
                 return
             }
 
+            const updateIllusts = async (index: number) => {
+                const card = await Search.pics(readyPicsInfo, session, links.length)
+                await session.updateMessage(msgId, [card]).catch(err => {
+                    if (err) {
+                        console.error(err)
+                        session.sendCard(AbNormal.error(`更新第${index + 1}张图出现错误`))
+                    }
+                })
+            }
+
             for (let index = 0; index < links.length; index++){
+                const illust = links[index]
+                console.log('循环开始')
                 if (index === 0) {
-                    const card = await Search.pics(readyPicsInfo, session)
+                    const card = await Search.pics(readyPicsInfo, session, links.length)
                     await session.sendCard(card).then(res => {
                         console.log(res.msgSent?.msgId)
                         msgId = res.msgSent?.msgId || ''
@@ -46,16 +60,49 @@ class PixivSearch extends AppCommand {
                     })
                 }
 
+                // 判断缓存
+                if (Cache.getCache(illust.id)) {
+                    readyPicsInfo.push({
+                        id: illust.id,
+                        link: Cache.getCache(illust.id),
+                        origin: illust.link,
+                        title: illust.title
+                    })
+                    console.log(readyPicsInfo)
+                    await updateIllusts(index)
+                    continue
+                }
+
                 // 走pixiv的cdn，可不需要代理
-                const link = links[index].link.replace("i.pximg.net", "i.pixiv.re")
+                const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
                 const formdata = new FormData()
+                console.log('开始下载')
                 const stream = await axios({
                     url: link,
-                    responseType: 'stream'
+                    responseType: 'stream',
+                    timeout: TIME_OUT
+                }).catch(err => {
+                    if (err) {
+                        console.error(err)
+                        session.sendCard(AbNormal.error(`网络问题，下载pid=[${illust.id}](https://www.pixiv.net/artworks/${illust.id})出现错误`))
+                    }
+                    return err
                 })
 
+                if (stream.status !== 200) {
+                    readyPicsInfo.push({
+                        title: `第${index + 1}张图下载失败`,
+                        id: '0',
+                        link: 'https://img.kookapp.cn/assets/2022-07/GuIK4BUe6P0li0i0.jpeg',
+                        origin: ''
+                    })
+                    continue;
+                }
+
                 let buffer = await sharp(await stream2buffer(stream.data)).resize(512).jpeg().toBuffer()
+                console.log('Sharp处理完毕')
                 const result = await NSFW(buffer)
+                console.log('nsfw识别完毕')
                 const nsfw = result.blur > 0
                 if (nsfw) {
                     buffer = await sharp(buffer).blur(result.blur).jpeg().toBuffer()
@@ -72,11 +119,12 @@ class PixivSearch extends AppCommand {
                     }
                 }).then(res => {
                     readyPicsInfo.push({
-                        title: links[index].title,
-                        id: links[index].id,
+                        title: illust.title,
+                        id: illust.id,
                         link: res.data.data.url,
-                        origin: links[index].link
+                        origin: illust.link
                     })
+                    Cache.setCache(illust.id, res.data.data.url)
                 }).catch(err => {
                     if (err) {
                         console.error(err)
@@ -85,15 +133,10 @@ class PixivSearch extends AppCommand {
                 })
                 // 进行更新
                 if (msgId) {
-                    const card = await Search.pics(readyPicsInfo, session)
-                    console.log('searchCard', card)
-                    session.updateMessage(msgId, [card]).catch(err => {
-                        if (err) {
-                            console.error(err)
-                            session.sendCard(AbNormal.error(`更新第${index + 1}张图出现错误`))
-                        }
-                    })
+                    console.log('ready',readyPicsInfo)
+                    await updateIllusts(index)
                 }
+                console.log('循环结束')
             }
 
         }
@@ -104,12 +147,12 @@ class PixivSearch extends AppCommand {
             const keywords = session.args[0];
             await axios({
                 // TODO 后续换成自己的接口，先用大佬的
-                url: "http://pixiv.lolicon.ac.cn/topInTag",
+                url: "http://127.0.0.1:8000/illusts/search",
                 params: {
                     keyword: keywords
                 }
             }).then(res => {
-                const slice = res.data.slice(0, 9);
+                const slice = res.data.data.slice(0, 9);
                 sendPics(slice.map((item: any) => ({
                     id: item.id,
                     link: item.image_urls.large,
