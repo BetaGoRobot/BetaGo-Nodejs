@@ -1,6 +1,6 @@
 // 请参考echo文件夹内的用法
 import { AppCommand, AppFunc, BaseSession } from 'kbotify'
-import { PixivMenu } from '../components/pixiv.top.core'
+import { PixivMenu } from './components/pixiv.top.core'
 import { Mode } from '../type'
 
 class PixivTop extends AppCommand {

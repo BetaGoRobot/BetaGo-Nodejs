@@ -25,3 +25,7 @@ type SearchLink = {
 export type SearchLinks = Array<SearchLink>
 
 export type SearchFinalLinks = Array<SearchLink & { origin: string }>
+
+type TopLink = SearchLink
+
+export type TopLinks = Array<TopLink>
