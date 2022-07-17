@@ -20,17 +20,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
+    - name: Yarn build
+    - run: yarn
+    - run: yarn build
+
     - name: ssh deploy
       uses: easingthemes/ssh-deploy@v2.2.11
       env:
         SSH_PRIVATE_KEY : ${{secrets.ALIYUN}}
         ARGS: "-rltgoDzvO --delete"
-        SOURCE: "/"
+        SOURCE: "/dist"
         REMOTE_HOST: ${{secrets.HOST}}
         REMOTE_USER: ${{secrets.USER}}
         TARGET: ${{secrets.TARGET}}
