@@ -5,11 +5,10 @@ export namespace Top {
     export const pics = (links: TopLinks, date: string, mode: Mode) => {
         const card = new Card();
         card.addTitle(`Pixiv 📅${date} ${Desc[mode]}Top排行榜`);
-        links.forEach((item, index) => {
-            card.addText(`Top${index + 1} >> title: ${item.title}, pid: [${item.id}](https://www.pixiv.net/artworks/${item.id})`)
+        links.sort((a,b) => a.top - b.top).forEach((item) => {
+            card.addText(`Top${item.top} >> title: ${item.title}, pid: [${item.id}](https://www.pixiv.net/artworks/${item.id})`)
             card.addImage(item.link)
         })
-        console.log(card)
 
         return card;
     }
