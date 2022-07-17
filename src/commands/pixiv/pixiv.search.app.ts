@@ -1,10 +1,10 @@
-import { AppCommand, AppFunc, BaseSession, Card } from 'kbotify'
+import { AppCommand, AppFunc, BaseSession } from 'kbotify'
 import { Search } from '../../cards/search'
 import { AbNormal } from '../../cards/error'
 import { SearchLinks, SearchFinalLinks } from './type'
 import { NSFW } from './components/nsfw'
 import { Cache } from './components/cache/pixiv-illusts-kook'
-import auth from '../../configs/auth'
+import { KookApi } from '../../apis'
 import FormData, { Stream } from 'form-data'
 import sharp from "sharp"
 import axios from 'axios'
@@ -108,24 +108,16 @@ class PixivSearch extends AppCommand {
                     buffer = await sharp(buffer).blur(result.blur).jpeg().toBuffer()
                 }
                 formdata.append('file', buffer, "1.jpg")
-                // 上传图片至开黑啦
-                await axios({
-                    method: "post",
-                    url: "https://www.kookapp.cn/api/v3/asset/create",
-                    data: formdata,
-                    headers: {
-                        'Authorization': `Bot ${auth.khltoken}`,
-                        ...formdata.getHeaders()
-                    }
-                }).then(res => {
+                await KookApi.upload(formdata).then(url => {
                     readyPicsInfo.push({
                         title: illust.title,
                         id: illust.id,
-                        link: res.data.data.url,
+                        link: url,
                         origin: illust.link
                     })
-                    Cache.setCache(illust.id, res.data.data.url)
-                }).catch(err => {
+                    Cache.setCache(illust.id, url)
+                })
+                .catch(err => {
                     if (err) {
                         console.error(err)
                         session.sendCard(AbNormal.error(`上传第${index + 1}张图出现错误`))
@@ -144,7 +136,7 @@ class PixivSearch extends AppCommand {
         if (!session.args.length) {
             session.sendCard(AbNormal.args('.pixiv search','请输入关键词, `.pixiv search [关键词]`'))
         } else {
-            const keywords = session.args[0];
+            const keywords = session.args.join(" ");
             await axios({
                 // TODO 后续换成自己的接口，先用大佬的
                 url: "http://127.0.0.1:8000/illusts/search",

@@ -13,7 +13,7 @@ Cache.init()
 
 setInterval(() => {
     Cache.save()
-}, 1000 * 30)
+}, 1000 * 60 * 5)
 
 
 bot.addCommands(echoMenu);
