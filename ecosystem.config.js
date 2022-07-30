@@ -4,8 +4,7 @@ module.exports = {
       cwd: './',
       kill_timeout: 10000,
       name: 'bot',
-      namespace: "kook
-      ",
+      namespace: "kook",
       script: "./node_modules/.bin/ts-node",
       "args": "-T -r tsconfig-paths/register ./src/index.ts",
       wait_ready: true,
