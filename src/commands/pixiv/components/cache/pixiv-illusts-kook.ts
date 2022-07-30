@@ -18,7 +18,9 @@ export namespace Cache {
     }
 
     export const setCache = (id: string, link: string) => {
-        cache[id] = link
+        if (link) {
+            cache[id] = link 
+        }
     }
 
     export const save = () => {
