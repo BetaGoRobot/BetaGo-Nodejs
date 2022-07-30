@@ -108,7 +108,7 @@ class PixivSearch extends AppCommand {
                     buffer = await sharp(buffer).blur(result.blur).jpeg().toBuffer()
                 }
                 formdata.append('file', buffer, "1.jpg")
-                await KookApi.upload(formdata).then(url => {
+                await KookApi.Media.upload(formdata).then(url => {
                     readyPicsInfo.push({
                         title: illust.title,
                         id: illust.id,
@@ -138,7 +138,6 @@ class PixivSearch extends AppCommand {
         } else {
             const keywords = session.args.join(" ");
             await axios({
-                // TODO 后续换成自己的接口，先用大佬的
                 url: "http://127.0.0.1:8000/illusts/search",
                 params: {
                     keyword: keywords
