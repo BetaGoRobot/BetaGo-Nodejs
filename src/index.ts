@@ -3,7 +3,7 @@ import { echoMenu } from './commands/echo/echo.menu';
 import { pixivMenu } from './commands/pixiv/pixiv.menu'
 import { Cache } from './commands/pixiv/components/cache/pixiv-illusts-kook'
 import { push } from './init/push'
-import { Mode } from 'commands/pixiv/type';
+import { Mode } from './commands/pixiv/type';
 
 
 bot.messageSource.on('message', (e) => {
