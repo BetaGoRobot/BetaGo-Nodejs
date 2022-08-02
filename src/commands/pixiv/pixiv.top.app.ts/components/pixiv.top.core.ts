@@ -8,7 +8,7 @@ import { KookApi } from '../../../../apis'
 import { Mode, TopLinks } from '../../type'
 
 //TODO: 使用该域名前缀将会避开GWF  replace("i.pximg.net", "i.pixiv.re")
-const TIME_OUT = 5000
+const TIME_OUT = 10000
 
 export const getTopCards = async (pics: any) => {
     const links: TopLinks = []

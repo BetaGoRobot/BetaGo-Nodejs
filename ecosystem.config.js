@@ -1,3 +1,4 @@
+// pm2 设置文件
 module.exports = {
   apps: [
     {
@@ -6,7 +7,7 @@ module.exports = {
       name: 'bot',
       namespace: "kook",
       script: "./node_modules/.bin/ts-node",
-      "args": "-T -r tsconfig-paths/register ./src/index.ts",
+      args: "-T -r tsconfig-paths/register ./src/index.ts",
       wait_ready: true,
       watch: false,
       // watch: ['server'],
