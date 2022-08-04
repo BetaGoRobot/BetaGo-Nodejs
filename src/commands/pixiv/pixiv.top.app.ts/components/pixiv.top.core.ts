@@ -9,9 +9,10 @@ import { Mode, TopLinks } from '../../type'
 
 //TODO: 使用该域名前缀将会避开GWF  replace("i.pximg.net", "i.pixiv.re")
 const TIME_OUT = 10000
+const RETRY_LIMIT = 5
 
-export const getTopCards = async (pics: any) => {
-    const links: TopLinks = []
+export const getTopCards = async (pics: any, retry ?: number) => {
+    let links: TopLinks = []
     for (let i = 0; i < pics.length; i++){
         const illust = pics[i]
         if (Cache.getCache(illust.id)) {
@@ -28,7 +29,7 @@ export const getTopCards = async (pics: any) => {
                 timeout: TIME_OUT
             }).catch(err => {
                 if (err) {
-                    console.error(err)
+                    console.error('请求流失败',err)
                 }
                 return err;
             })
@@ -56,16 +57,21 @@ export const getTopCards = async (pics: any) => {
                 })
                 .catch(err => {
                     if (err) {
-                        console.error(err)
+                        console.error('上传Formdata至开黑啦服务器时出现异常', err)
                         links.push({
                             id: '0',
                             link: 'https://img.kaiheila.cn/emojis/3757937292559087/qK1gHuxGo40u00t5.png',
                             title: `top[${i + 1}]图片上传失败`,
-                            top: 114514
+                            top: i + 1
                         })
                     }
             })
         }
+    }
+    // 若有图片下载失败，重新下载，因为有缓存，所以不用担心请求过多的问题
+    if (links.find(item => item.id === '0') && (retry || 0) < RETRY_LIMIT) {
+        console.log('重复请求中~~')
+        links = await getTopCards(pics, (retry || 0) + 1)
     }
     return links
 }
@@ -93,8 +99,8 @@ export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (
         const pics = res.data.data.illusts.slice(0, number);
         const date = res.data.data.date;
         await session.sendCard(Top.loading(date, mode))
-        const links: TopLinks = await getTopCards(pics)
-        session.sendCard(Top.pics(links, date, mode))
+        let links: TopLinks = await getTopCards(pics)
+        await session.sendCard(Top.pics(links, date, mode))
     })
     .catch(err => {
         if (err) {

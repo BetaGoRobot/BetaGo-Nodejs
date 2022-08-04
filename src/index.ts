@@ -13,6 +13,7 @@ bot.messageSource.on('message', (e) => {
 // 缓存
 Cache.init()
 setInterval(() => {
+    console.log('缓存保存')
     Cache.save()
 }, 1000 * 60 * 5)
 
