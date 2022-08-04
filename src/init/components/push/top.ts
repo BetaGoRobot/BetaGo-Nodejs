@@ -10,7 +10,6 @@ export const pushTop = async (mode: Mode) => {
     got(`http://127.0.0.1:8000/ranks/${mode}`, {
         method: 'get'
     }).json<any>().then(async (res) => {
-        console.log(res.data.illusts)
         const pics = res.data.illusts.slice(0, 10);
         const date = res.data.date;
         const links = await getTopCards(pics);

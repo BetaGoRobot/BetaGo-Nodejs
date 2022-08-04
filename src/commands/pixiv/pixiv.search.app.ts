@@ -28,12 +28,8 @@ class PixivSearch extends AppCommand {
         let msgId: string
 
         const sendPics = async (links: SearchLinks) => {
-            const readyPicsInfo: SearchFinalLinks = []
-            if (!links.length) {
-                session.sendCard(Search.Failed('关键词图片貌似搜不到捏，要不换个词试试？'))
-                return
-            }
 
+            // 更新频道插画
             const updateIllusts = async (index: number) => {
                 const card = await Search.pics(readyPicsInfo, session, links.length)
                 await session.updateMessage(msgId, [card]).catch(err => {
@@ -44,13 +40,34 @@ class PixivSearch extends AppCommand {
                 })
             }
 
+            // 获取图片流
+            const getIllustsStream = async (link: string, id: string) => {
+                return axios({
+                    url: link,
+                    responseType: 'stream',
+                    timeout: TIME_OUT
+                }).catch(err => {
+                    if (err) {
+                        console.error(err)
+                        session.sendCard(AbNormal.error(`网络问题，下载pid = [${id}](https://www.pixiv.net/artworks/${id})出现错误 \n 正在尝试重复获取`))
+                    }
+                    return err
+                })
+            }
+
+            const readyPicsInfo: SearchFinalLinks = []
+            if (!links.length) {
+                session.sendCard(Search.Failed('关键词图片貌似搜不到捏，要不换个词试试？'))
+                return
+            }
+
             for (let index = 0; index < links.length; index++){
+                let retry = 0; // 重复请求计数器
                 const illust = links[index]
-                console.log('循环开始')
-                if (index === 0) {
+
+                if (index === 0) { // 先发送图片框架至频道，然后慢慢更新
                     const card = await Search.pics(readyPicsInfo, session, links.length)
                     await session.sendCard(card).then(res => {
-                        console.log(res.msgSent?.msgId)
                         msgId = res.msgSent?.msgId || ''
                     }).catch(err => {
                         if (err) {
@@ -60,7 +77,7 @@ class PixivSearch extends AppCommand {
                     })
                 }
 
-                // 判断缓存
+                // 缓存命中
                 if (Cache.getCache(illust.id)) {
                     readyPicsInfo.push({
                         id: illust.id,
@@ -68,26 +85,18 @@ class PixivSearch extends AppCommand {
                         origin: illust.link,
                         title: illust.title
                     })
-                    console.log(readyPicsInfo)
                     await updateIllusts(index)
                     continue
                 }
 
                 // 走pixiv的cdn，可不需要代理
                 const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
-                const formdata = new FormData()
-                console.log('开始下载')
-                const stream = await axios({
-                    url: link,
-                    responseType: 'stream',
-                    timeout: TIME_OUT
-                }).catch(err => {
-                    if (err) {
-                        console.error(err)
-                        session.sendCard(AbNormal.error(`网络问题，下载pid=[${illust.id}](https://www.pixiv.net/artworks/${illust.id})出现错误`))
-                    }
-                    return err
-                })
+                let stream = await getIllustsStream(link, illust.id)
+
+                // 下载失败的图片重复下载
+                while (stream.status !== 200 && retry < 5) {
+                    stream = await getIllustsStream(link, illust.id)
+                }
 
                 if (stream.status !== 200) {
                     readyPicsInfo.push({
@@ -100,13 +109,12 @@ class PixivSearch extends AppCommand {
                 }
 
                 let buffer = await sharp(await stream2buffer(stream.data)).resize(512).jpeg().toBuffer()
-                console.log('Sharp处理完毕')
                 const result = await NSFW(buffer)
-                console.log('nsfw识别完毕')
                 const nsfw = result.blur > 0
                 if (nsfw) {
                     buffer = await sharp(buffer).blur(result.blur).jpeg().toBuffer()
                 }
+                const formdata = new FormData()
                 formdata.append('file', buffer, "1.jpg")
                 await KookApi.Media.upload(formdata).then(url => {
                     readyPicsInfo.push({
@@ -125,10 +133,8 @@ class PixivSearch extends AppCommand {
                 })
                 // 进行更新
                 if (msgId) {
-                    console.log('ready',readyPicsInfo)
                     await updateIllusts(index)
                 }
-                console.log('循环结束')
             }
 
         }
