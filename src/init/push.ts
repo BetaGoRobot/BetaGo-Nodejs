@@ -11,9 +11,9 @@ export const push = async (mode: Mode) => {
     let now = Number(moment().format('x'))
     if (setting.push_setting.start) {
         pushTop(mode)
-        triggerTime += ONE_DAY_GAP
     }
 
+    triggerTime += ONE_DAY_GAP
     const gap = triggerTime - now
     setTimeout(() => {
         pushTop(mode)

@@ -1,4 +1,4 @@
-// kook-robot 提供的api
+// kook官方提供的api集合
 import { assetsUpload } from "./assets"
 import * as Message from './message'
 import * as Channels from './channle'
