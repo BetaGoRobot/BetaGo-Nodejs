@@ -34,7 +34,7 @@
         // "./src/utils/*.ts",
         // "./src/index.ts",
         "./src/**/*.ts",
-        ".eslintrc.js",
+        ".eslintrc.js", "src/commands/pixiv/pixiv.top.app",
     ],
     "exclude": ["./src/tests/*.ts"]
 }

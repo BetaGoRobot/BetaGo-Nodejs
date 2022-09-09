@@ -26,7 +26,9 @@ export type SearchLinks = Array<SearchLink>
 
 export type SearchFinalLinks = Array<SearchLink & { origin: string }>
 
-export type TopLinks = Array<SearchLink & { top: number }>
+export type KookLink = {top : number} & SearchLink
+
+export type KookLinks = Array<KookLink>
 
 
 
