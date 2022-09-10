@@ -16,6 +16,15 @@ export enum Desc {
     month = '月榜'
 }
 
+export type PixivIllustLink = {
+    id: string,
+    title: string,
+    image_urls: {
+        medium: string,
+        large: string
+    }
+}
+
 type SearchLink = {
     title: string,
     link: string,

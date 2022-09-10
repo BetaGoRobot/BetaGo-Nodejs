@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Top } from '../../../../cards/top'
 import { AbNormal } from '../../../../cards/error';
 import { KookLinks, Mode } from '../../type'
-import { getKookLinks } from '../../components/links/kook-links'
+import { getKookLinks } from '../../components/illusts/kook-links'
 
 
 export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (session) => {
@@ -21,7 +21,6 @@ export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (
     }
 
     const number = (Number(session.args[0]) > 20 ? 20 : session.args[0]) || 10;
-
 
 
     // TODO 后续换成域名接口

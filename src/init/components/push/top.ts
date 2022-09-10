@@ -1,7 +1,7 @@
 // 每日top自动推送
 import got from 'got'
 import { Mode } from '../../../commands/pixiv/type'
-import { getKookLinks } from '../../../commands/pixiv/components/links/kook-links'
+import { getKookLinks } from '../../../commands/pixiv/components/illusts/kook-links'
 import { Top, AbNormal } from '../../../cards'
 import { KookApi, KookType } from '../../../apis'
 import auth from '../../../configs/auth'

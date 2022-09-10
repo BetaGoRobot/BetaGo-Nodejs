@@ -2,6 +2,7 @@ import { AppCommand, AppFunc, BaseSession } from 'kbotify'
 import axios from 'axios'
 import { AbNormal } from '../../../cards/error'
 import { PixivUser } from './type'
+import { User } from '../../../cards'
 
 
 
@@ -18,7 +19,7 @@ class PixivUserIllusts extends AppCommand {
             await Promise.all([
                 axios.get(`http://127.0.0.1:8000/user/detail?id=${userId}`),
                 axios.get(`http://127.0.0.1:8000/user/illusts?id=${userId}`)
-            ]).then(res => {
+            ]).then(async (res) => {
                 const userInfo = res[0].data.data
                 const userIllusts = res[1].data.data
                 const user: PixivUser = {
@@ -27,9 +28,34 @@ class PixivUserIllusts extends AppCommand {
                     avatar: userInfo.user.profile_image_urls.medium,
                     comment: userInfo.user.comment,
                     twitter: userInfo.profile.twitter_url,
+                    // @ts-ignore
+                    pixivIllusts: userIllusts.illusts.map(item => {
+                        return {
+                            title: item.title,
+                            id: item.id,
+                            image_urls: {
+                                large: item.image_urls.large
+                            }
+                        }
+                    })
+                }
+                console.log(user)
+                session.sendCard(await User.Intro(user))
+            })
+            .catch(err => {
+                if (err) {
+                    console.error(err)
+                }
+                return {
+                    name: '',
+                    id: '',
+                    avatar: '',
                     pixivIllusts: []
                 }
             })
+
         }
     }
 }
+
+export const pixivUserIllusts = new PixivUserIllusts()

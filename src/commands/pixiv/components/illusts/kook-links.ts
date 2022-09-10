@@ -1,7 +1,8 @@
 // 将外链转换为kook内部链接
 import { KookLink } from '../../type'
-import { Cache } from '../../components/cache/pixiv-illusts-kook'
+import { Cache } from '../cache/pixiv-illusts-kook'
 import { KookApi } from '../../../../apis'
+import { PixivIllustLink } from '../../type'
 import FormData from 'form-data'
 import axios from 'axios'
 
@@ -9,7 +10,7 @@ const TIME_OUT = 10000
 const RETRY_LIMIT = 5
 
 // 获取Kook链接
-export const getKookLinks = async (pics: any, retry?: number) => {
+export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number) => {
     let links: Array<KookLink> = []
     for (let i = 0; i < pics.length; i++){
         const illust = pics[i]
@@ -21,6 +22,7 @@ export const getKookLinks = async (pics: any, retry?: number) => {
                 top: i + 1
             })
         } else {
+            console.log(illust.image_urls)
             const res = await uploadImage(illust.image_urls.large.replace("i.pximg.net", "i.pixiv.re"))
             if (res.status === 'error') {
                 links.push({
