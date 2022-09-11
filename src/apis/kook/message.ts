@@ -1,7 +1,7 @@
 // 频道消息相关接口
 import { kookGot } from './got'
 import { Response } from './kook.type'
-import auth from '../configs/auth'
+import auth from '../../configs/auth'
 
 type Message = {
     msg_id: string,

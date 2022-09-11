@@ -3,11 +3,11 @@ import got from 'got'
 import { Mode } from '../../../commands/pixiv/type'
 import { getKookLinks } from '../../../commands/pixiv/components/illusts/kook-links'
 import { Top, AbNormal } from '../../../cards'
-import { KookApi, KookType } from '../../../apis'
+import { KookApi, KookType } from '../../../apis/kook'
 import auth from '../../../configs/auth'
 
 export const pushTop = async (mode: Mode) => {
-    got(`http://127.0.0.1:8000/ranks/${mode}`, {
+    got(`https://api.pixiv.runtus.top/ranks/${mode}`, {
         method: 'get'
     }).json<any>().then(async (res) => {
         const pics = res.data.illusts.slice(0, 10);

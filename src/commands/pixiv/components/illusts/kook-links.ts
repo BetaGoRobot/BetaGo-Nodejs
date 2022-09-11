@@ -1,7 +1,7 @@
 // 将外链转换为kook内部链接
 import { KookLink } from '../../type'
 import { Cache } from '../cache/pixiv-illusts-kook'
-import { KookApi } from '../../../../apis'
+import { KookApi } from '../../../../apis/kook'
 import { PixivIllustLink } from '../../type'
 import FormData from 'form-data'
 import axios from 'axios'
