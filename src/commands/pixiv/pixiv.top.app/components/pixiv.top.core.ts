@@ -1,5 +1,5 @@
 import { AppFunc, BaseSession } from 'kbotify'
-import axios from 'axios'
+import { Pixiv } from '../../../../apis/pixiv'
 import { Top } from '../../../../cards/top'
 import { AbNormal } from '../../../../cards/error';
 import { KookLinks, Mode } from '../../type'
@@ -17,14 +17,13 @@ export const PixivMenu: (mode: Mode) => AppFunc<BaseSession> = (mode) => async (
     }
 
     if ((Number(session.args[0])) > 20) {
-        session.reply('由于开黑啦限制，每次图片最多展示20张')
+        session.reply('由于开黑啦（Kook）限制，每次图片最多展示20张')
     }
 
     const number = (Number(session.args[0]) > 20 ? 20 : session.args[0]) || 10;
 
-
     // TODO 后续换成域名接口
-    await axios.get(`http://127.0.0.1:8000/ranks/${mode}`).then(async (res) => {
+    await Pixiv.request.get(`/ranks/${mode}`).then(async (res) => {
         const pics = res.data.data.illusts.slice(0, number);
         const date = res.data.data.date;
         await session.sendCard(Top.loading(date, mode))

@@ -4,10 +4,10 @@ import { AbNormal } from '../../../cards/error'
 import { SearchLinks, SearchFinalLinks } from '../type'
 import { NSFW } from '../components/nsfw'
 import { Cache } from '../components/cache/pixiv-illusts-kook'
-import { KookApi } from '../../../apis'
+import { KookApi } from '../../../apis/kook'
+import { Pixiv } from '../../../apis/pixiv'
 import FormData, { Stream } from 'form-data'
 import sharp from "sharp"
-import axios from 'axios'
 
 const TIME_OUT = 5000;
 
@@ -42,7 +42,7 @@ class PixivSearch extends AppCommand {
 
             // 获取图片流
             const getIllustsStream = async (link: string, id: string) => {
-                return axios({
+                return Pixiv.request({
                     url: link,
                     responseType: 'stream',
                     timeout: TIME_OUT
@@ -143,8 +143,8 @@ class PixivSearch extends AppCommand {
             session.sendCard(AbNormal.args('.pixiv search','请输入关键词, `.pixiv search [关键词]`'))
         } else {
             const keywords = session.args.join(" ");
-            await axios({
-                url: "http://127.0.0.1:8000/illusts/search",
+            await Pixiv.request({
+                url: "/illusts/search",
                 params: {
                     keyword: keywords
                 }

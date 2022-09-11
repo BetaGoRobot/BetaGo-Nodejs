@@ -1,5 +1,6 @@
 import { AppCommand, AppFunc, BaseSession } from 'kbotify'
 import axios from 'axios'
+import { Pixiv } from '../../../apis/pixiv'
 import { AbNormal } from '../../../cards/error'
 import { PixivUser } from './type'
 import { User, Loading } from '../../../cards'
@@ -15,8 +16,8 @@ class PixivUserIllusts extends AppCommand {
         } else {
             const userId = session.args[0]
             await Promise.all([
-                axios.get(`http://127.0.0.1:8000/user/detail?id=${userId}`),
-                axios.get(`http://127.0.0.1:8000/user/illusts?id=${userId}`)
+                Pixiv.request.get(`/user/detail?id=${userId}`),
+                Pixiv.request.get(`/user/illusts?id=${userId}`)
             ]).then(async (res) => {
                 const userInfo = res[0].data.data
                 const userIllusts = res[1].data.data
