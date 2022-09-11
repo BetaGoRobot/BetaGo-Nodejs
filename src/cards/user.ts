@@ -93,5 +93,5 @@ export namespace User {
         });
 
         return card;
-    };
+    }
 }

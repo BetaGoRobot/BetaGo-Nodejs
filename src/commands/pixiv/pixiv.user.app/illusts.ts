@@ -2,9 +2,7 @@ import { AppCommand, AppFunc, BaseSession } from 'kbotify'
 import axios from 'axios'
 import { AbNormal } from '../../../cards/error'
 import { PixivUser } from './type'
-import { User } from '../../../cards'
-
-
+import { User, Loading } from '../../../cards'
 
 // TODO: 后期增加漫画选项
 class PixivUserIllusts extends AppCommand {
@@ -39,21 +37,16 @@ class PixivUserIllusts extends AppCommand {
                         }
                     })
                 }
-                console.log(user)
-                session.sendCard(await User.Intro(user))
+
+                session.replyCard(Loading.AnotherCard('用户/画师信息正在寻找中，请稍等'), {})
+                session.replyCard((await User.Intro(user)), {})
             })
             .catch(err => {
                 if (err) {
                     console.error(err)
                 }
-                return {
-                    name: '',
-                    id: '',
-                    avatar: '',
-                    pixivIllusts: []
-                }
+                session.replyCard(AbNormal.error("搜索画师信息出现错误，请联系开发者"), {})
             })
-
         }
     }
 }

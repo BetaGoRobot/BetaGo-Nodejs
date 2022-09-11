@@ -11,7 +11,6 @@ const RETRY_LIMIT = 5
 
 // 获取Kook链接
 export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number) => {
-    console.log(pics)
     let links: Array<KookLink> = []
     for (let i = 0; i < pics.length; i++){
         const illust = pics[i]
@@ -63,6 +62,7 @@ export const uploadImage = async (url: string) => {
         }
         return err;
     })
+
 
     if (stream.status !== 200) {
         return {

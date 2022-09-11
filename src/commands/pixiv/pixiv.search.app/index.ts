@@ -89,7 +89,7 @@ class PixivSearch extends AppCommand {
                     continue
                 }
 
-                // 走pixiv的cdn，可不需要代理
+                // 走pixiv的cdn，不需要代理
                 const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
                 let stream = await getIllustsStream(link, illust.id)
 
