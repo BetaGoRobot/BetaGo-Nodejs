@@ -11,6 +11,7 @@ const RETRY_LIMIT = 5
 
 // 获取Kook链接
 export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number) => {
+    console.log(pics)
     let links: Array<KookLink> = []
     for (let i = 0; i < pics.length; i++){
         const illust = pics[i]
@@ -22,7 +23,6 @@ export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number)
                 top: i + 1
             })
         } else {
-            console.log(illust.image_urls)
             const res = await uploadImage(illust.image_urls.large.replace("i.pximg.net", "i.pixiv.re"))
             if (res.status === 'error') {
                 links.push({
