@@ -1,7 +1,7 @@
 // 每日top自动推送
 import got from 'got'
 import { Mode } from '../../../commands/pixiv/type'
-import { getTopCards } from '../../../commands/pixiv/pixiv.top.app.ts/components/pixiv.top.core'
+import { getKookLinks } from '../../../commands/pixiv/components/illusts/kook-links'
 import { Top, AbNormal } from '../../../cards'
 import { KookApi, KookType } from '../../../apis'
 import auth from '../../../configs/auth'
@@ -12,7 +12,7 @@ export const pushTop = async (mode: Mode) => {
     }).json<any>().then(async (res) => {
         const pics = res.data.illusts.slice(0, 10);
         const date = res.data.date;
-        const links = await getTopCards(pics);
+        const links = await getKookLinks(pics);
         const cards = Top.pics(links, date, mode).toString()
         auth.push_setting.recommendChannelIds.forEach(item => {
             KookApi.Channel.sendMessage(cards, item, KookType.MessageType.card)

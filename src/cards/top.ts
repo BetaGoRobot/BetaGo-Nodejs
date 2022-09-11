@@ -1,8 +1,8 @@
 import { Card } from 'kbotify'
-import { TopLinks, Mode, Desc } from '../commands/pixiv/type'
+import { KookLinks, Mode, Desc } from '../commands/pixiv/type'
 
 export namespace Top {
-    export const pics = (links: TopLinks, date: string, mode: Mode) => {
+    export const pics = (links: KookLinks, date: string, mode: Mode) => {
         const card = new Card();
         card.addTitle(`Pixiv 📅${date} ${Desc[mode]}Top排行榜`);
         links.sort((a,b) => a.top - b.top).forEach((item) => {

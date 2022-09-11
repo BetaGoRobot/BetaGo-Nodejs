@@ -1,10 +1,10 @@
 import { AppCommand, AppFunc, BaseSession } from 'kbotify'
-import { Search } from '../../cards/search'
-import { AbNormal } from '../../cards/error'
-import { SearchLinks, SearchFinalLinks } from './type'
-import { NSFW } from './components/nsfw'
-import { Cache } from './components/cache/pixiv-illusts-kook'
-import { KookApi } from '../../apis'
+import { Search } from '../../../cards/search'
+import { AbNormal } from '../../../cards/error'
+import { SearchLinks, SearchFinalLinks } from '../type'
+import { NSFW } from '../components/nsfw'
+import { Cache } from '../components/cache/pixiv-illusts-kook'
+import { KookApi } from '../../../apis'
 import FormData, { Stream } from 'form-data'
 import sharp from "sharp"
 import axios from 'axios'
@@ -89,7 +89,7 @@ class PixivSearch extends AppCommand {
                     continue
                 }
 
-                // 走pixiv的cdn，可不需要代理
+                // 走pixiv的cdn，不需要代理
                 const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
                 let stream = await getIllustsStream(link, illust.id)
 

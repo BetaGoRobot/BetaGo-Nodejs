@@ -1,6 +1,7 @@
 import { Card, MenuCommand } from 'kbotify'
 import { pixivSearch } from './pixiv.search.app'
-import { pixivDay, pixivMonth, pixivWeek} from './pixiv.top.app.ts'
+import { pixivDay, pixivMonth, pixivWeek } from './pixiv.top.app'
+import { pixivUserIllusts } from './pixiv.user.app'
 
 class PixivMenu extends MenuCommand {
     code = 'pixiv';
@@ -46,10 +47,20 @@ class PixivMenu extends MenuCommand {
                     type: "kmarkdown",
                     content: "`.pixiv [day/week/month] [number]` 获得**每日/每周/每月**的热门插画, `number`表示展示top插画数量"
                 }
+            },
+            {
+                type: "divider"
+            },
+            {
+                type: "section",
+                text: {
+                    type: "kmarkdown",
+                    content: "`.pixiv user [id]` 获得**指定用户**的插画作品"
+                }
             }
         ]
     }).toString()
     useCardMenu = true;
 }
 
-export const pixivMenu = new PixivMenu(pixivSearch, pixivDay, pixivWeek, pixivMonth)
+export const pixivMenu = new PixivMenu(pixivSearch, pixivDay, pixivWeek, pixivMonth, pixivUserIllusts)
