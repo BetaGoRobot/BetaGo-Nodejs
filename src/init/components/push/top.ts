@@ -14,6 +14,7 @@ export const pushTop = async (mode: Mode) => {
         const date = res.data.date;
         const links = await getKookLinks(pics);
         const cards = Top.pics(links, date, mode).toString()
+        console.log(links)
         auth.push_setting.recommendChannelIds.forEach(item => {
             KookApi.Channel.sendMessage(cards, item, KookType.MessageType.card)
             .catch(err => {

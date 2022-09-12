@@ -12,6 +12,9 @@ module.exports = {
       watch: false,
       // watch: ['server'],
       ignore_watch: ['node_modules'],
+      env: {
+        "NODE_ENV": "production"
+      },
       watch_options: {
         "usePolling": true
       }
