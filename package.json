@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "start": "export NODE_ENV=development && node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "build": "yarn etsc --config=etsc.config.js",
-    "service": "pm2 start src/index.ts --name='Kaiheila'"
+    "service": "pm2 start ecosystem.config.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/fi6/kbotify-template/issues"
   },
-  "homepage": "https://github.com/fi6/kbotify-template#readme",
+  "homepage": "htstps://github.com/fi6/kbotify-template#readme",
   "dependencies": {
     "@alicloud/imageaudit-2019-12-30": "^2.0.0",
     "@alicloud/pop-core": "^1.7.12",
