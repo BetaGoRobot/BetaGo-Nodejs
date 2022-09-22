@@ -38,6 +38,7 @@ class PixivUserIllusts extends AppCommand {
                         }
                     })
                 }
+                console.log('user',user)
 
                 session.replyCard(Loading.AnotherCard('用户/画师信息正在寻找中，请稍等'), {})
                 session.replyCard((await User.Intro(user)), {})

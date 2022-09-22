@@ -33,6 +33,8 @@ export namespace User {
             }
         }, '');
 
+        console.log('format',format)
+
         const card = new Card({
             type: 'card',
             theme: 'info',
