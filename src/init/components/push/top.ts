@@ -7,7 +7,7 @@ import { KookApi, KookType } from '../../../apis/kook'
 import auth from '../../../configs/auth'
 
 export const pushTop = async (mode: Mode) => {
-    got(`https://api.pixiv.runtus.top/ranks/${mode}`, {
+    got(`http://8.210.131.57:8000/ranks/${mode}`, {
         method: 'get'
     }).json<any>().then(async (res) => {
         const pics = res.data.illusts.slice(0, 10);
