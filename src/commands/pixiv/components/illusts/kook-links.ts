@@ -22,7 +22,8 @@ export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number)
                 top: i + 1
             })
         } else {
-            const res = await uploadImage(illust.image_urls.large.replace("i.pximg.net", "i.pixiv.re"))
+            // const res = await uploadImage(illust.image_urls.large.replace("i.pximg.net", "i.pixiv.re"))
+            const res = await uploadImage(illust.image_urls.large)
             if (res.status === 'error') {
                 links.push({
                     id: '0',
@@ -54,6 +55,9 @@ export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number)
 export const uploadImage = async (url: string) => {
     const stream = await axios({
         url,
+        headers: {
+            "Referer": "https://www.pixiv.net/"
+        },
         responseType: 'stream',
         timeout: TIME_OUT
     }).catch(err => {

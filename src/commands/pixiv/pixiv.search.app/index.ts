@@ -45,6 +45,9 @@ class PixivSearch extends AppCommand {
                 return Pixiv.request({
                     url: link,
                     responseType: 'stream',
+                    headers: {
+                        "Referer": "https://www.pixiv.net/"
+                    },
                     timeout: TIME_OUT
                 }).catch(err => {
                     if (err) {
@@ -90,7 +93,8 @@ class PixivSearch extends AppCommand {
                 }
 
                 // 走pixiv的cdn，不需要代理
-                const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
+                // const link = illust.link.replace("i.pximg.net", "i.pixiv.re")
+                const link = illust.link
                 let stream = await getIllustsStream(link, illust.id)
 
                 // 下载失败的图片重复下载
@@ -108,7 +112,10 @@ class PixivSearch extends AppCommand {
                     continue;
                 }
 
+                console.log('stream',stream)
+
                 let buffer = await sharp(await stream2buffer(stream.data)).resize(512).jpeg().toBuffer()
+                console.log(12346)
                 const result = await NSFW(buffer)
                 const nsfw = result.blur > 0
                 if (nsfw) {

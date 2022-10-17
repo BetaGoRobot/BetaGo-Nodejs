@@ -15,7 +15,9 @@ export namespace User {
             kookLinks: await getKookLinks(user.pixivIllusts.slice(0, UP_LIMIT)),
             kookAvatar: (
                 await uploadImage(
-                    user.avatar.replace('i.pximg.net', 'i.pixiv.re')
+                    // i.pixiv.re 出现些问题，暂时先用原链接替代
+                    // user.avatar.replace('i.pximg.net', 'i.pixiv.re')
+                    user.avatar
                 )
             ).url,
         };
