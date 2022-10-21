@@ -41,10 +41,10 @@ expose({
                 }
             }
 
-            if (result.find(item => item.id === '0') && (retry || 0) < RETRY_LIMIT) {
-                console.log('重复请求中~~')
-                result = await download((retry || 0) + 1)
-            }
+            // if (result.find(item => item.id === '0') && (retry || 0) < RETRY_LIMIT) {
+            //     console.log('重复请求中~~')
+            //     result = await download((retry || 0) + 1)
+            // }
             return result
         }
         
