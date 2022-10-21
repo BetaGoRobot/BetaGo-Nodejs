@@ -14,7 +14,6 @@ export const assetsUpload = async (formdata: FormData) => {
             ...formdata.getHeaders()
         }
     }).json<Response<Assets>>().then(res => {
-        console.log('res',res)
         if (res.code === 0) {
             return res.data.url
         } else {

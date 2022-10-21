@@ -112,8 +112,6 @@ class PixivSearch extends AppCommand {
                     continue;
                 }
 
-                console.log('stream',stream)
-
                 let buffer = await sharp(await stream2buffer(stream.data)).resize(512).jpeg().toBuffer()
                 console.log(12346)
                 const result = await NSFW(buffer)
