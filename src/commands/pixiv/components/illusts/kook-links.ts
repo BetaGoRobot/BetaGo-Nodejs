@@ -1,54 +1,48 @@
 // 将外链转换为kook内部链接
-import { KookLink } from '../../type'
-import { Cache } from '../cache/pixiv-illusts-kook'
+import { spawn, Thread, Worker } from 'threads'
 import { KookApi } from '../../../../apis/kook'
-import { PixivIllustLink } from '../../type'
+import { PixivIllustLink, KookLink } from '../../type'
 import FormData from 'form-data'
 import axios from 'axios'
 
+const WORKERS_NUMBER = 4
+
 const TIME_OUT = 10000
-const RETRY_LIMIT = 5
 
 // 获取Kook链接
 export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number) => {
-    let links: Array<KookLink> = []
-    for (let i = 0; i < pics.length; i++){
-        const illust = pics[i]
-        if (Cache.getCache(illust.id)) {
-            links.push({
-                id: illust.id,
-                link: Cache.getCache(illust.id),
-                title: illust.title,
-                top: i + 1
-            })
-        } else {
-            // const res = await uploadImage(illust.image_urls.large.replace("i.pximg.net", "i.pixiv.re"))
-            const res = await uploadImage(illust.image_urls.large)
-            if (res.status === 'error') {
-                links.push({
-                    id: '0',
-                    link: 'https://img.kaiheila.cn/emojis/3757937292559087/qK1gHuxGo40u00t5.png',
-                    title: `图片id为[${illust.id}](https://www.pixiv.net/artworks/${illust.id})下载/上传异常`,
-                    top: 114514
-                })
-                continue
-            } else {
-                links.push({
-                    id: illust.id,
-                    link: res.url,
-                    title: illust.title,
-                    top: i + 1
-                })
-                Cache.setCache(illust.id, res.url)
-            }
-        }
+    const start = new Date().getTime()
+    const workers = await Promise.all(
+        new Array(WORKERS_NUMBER).fill('').map(() => (
+            spawn(new Worker("./worker.ts"))
+        ))
+    )
+
+    // 任务分发
+    const workers_map = () => {
+        const length = pics.length;
+        const split_number = Math.floor(length / WORKERS_NUMBER)
+        return workers.map((item, index) =>
+            (item.getLinks(pics.slice(index * split_number, index + 1 === WORKERS_NUMBER ? length : (index + 1) * split_number)))
+        )
     }
-    // 若有图片下载失败，重新下载，因为有缓存，所以不用担心请求过多的问题
-    if (links.find(item => item.id === '0') && (retry || 0) < RETRY_LIMIT) {
-        console.log('重复请求中~~')
-        links = await getKookLinks(pics, (retry || 0) + 1)
+    // 结果合并
+    const workers_reduce = (result: Array<Array<KookLink>>) => {
+        const reduce = [...result.reduce((pre, next) => [...pre, ...next], [])].map((item, index) => {
+            item.top = index + 1
+            return item
+        })
+        return reduce
     }
-    return links
+
+
+
+    const result = (await Promise.all(workers_map())) as Array<Array<KookLink>>;
+    console.log('经过了', new Date().getTime() - start, 'ms')
+    // 下载Worker关闭
+    await Promise.all(workers.map(item => Thread.terminate(item)))
+    // 数组扁平化
+    return workers_reduce(result)
 }
 
 // 将外链转化为kook链接
@@ -58,6 +52,10 @@ export const uploadImage = async (url: string) => {
         headers: {
             "Referer": "https://www.pixiv.net/"
         },
+        // proxy: {
+        //     host: '127.0.0.1',
+        //     port: 7890
+        // },
         responseType: 'stream',
         timeout: TIME_OUT
     }).catch(err => {
