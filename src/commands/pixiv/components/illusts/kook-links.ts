@@ -35,8 +35,12 @@ export const getKookLinks = async (pics: Array<PixivIllustLink>, retry?: number)
         return reduce
     }
 
+
+
     const result = (await Promise.all(workers_map())) as Array<Array<KookLink>>;
     console.log('经过了', new Date().getTime() - start, 'ms')
+    // 下载Worker关闭
+    await Promise.all(workers.map(item => Thread.terminate(item)))
     // 数组扁平化
     return workers_reduce(result)
 }
@@ -48,10 +52,10 @@ export const uploadImage = async (url: string) => {
         headers: {
             "Referer": "https://www.pixiv.net/"
         },
-        // proxy: {
-        //     host: '127.0.0.1',
-        //     port: 7890
-        // },
+        proxy: {
+            host: '127.0.0.1',
+            port: 7890
+        },
         responseType: 'stream',
         timeout: TIME_OUT
     }).catch(err => {

@@ -7,6 +7,7 @@ const RETRY_LIMIT = 5
 
 expose({
     async getLinks(pics: Array<PixivIllustLink>) {
+        console.log('Work已启动')
         const download = async (retry ?: number) => {
             let result: Array<KookLink> = []
             for (let i = 0; i < pics.length; i++){
