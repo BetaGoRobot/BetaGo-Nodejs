@@ -52,10 +52,10 @@ export const uploadImage = async (url: string) => {
         headers: {
             "Referer": "https://www.pixiv.net/"
         },
-        proxy: {
-            host: '127.0.0.1',
-            port: 7890
-        },
+        // proxy: {
+        //     host: '127.0.0.1',
+        //     port: 7890
+        // },
         responseType: 'stream',
         timeout: TIME_OUT
     }).catch(err => {
